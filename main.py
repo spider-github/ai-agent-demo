@@ -4,6 +4,7 @@ from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_core.prompts import PromptTemplate
+from langchain_community.tools.tavily_search import TavilySearchResults
 
 # --------------------------
 # 1. 加载环境配置
@@ -34,8 +35,15 @@ def calculator(expression: str) -> str:
     except Exception as e:
         return f"计算失败，错误信息：{str(e)}"
 
+# 网页搜索工具：支持查询实时信息、最新资讯
+web_search = TavilySearchResults(
+    max_results=3,
+    description="调用搜索引擎查询实时信息、最新资讯、行业动态、未知知识。仅当问题涉及实时、最新或模型不知道的信息时使用，输入为搜索关键词。"
+)
+
+
 # 所有工具打包成列表，后续加新工具只需在这里添加
-tools = [calculator]
+tools = [calculator, web_search]
 
 # --------------------------
 # 3. ReAct 提示词模板
